@@ -9,6 +9,7 @@ import AlumniPage from './pages/AlumniPage';
 import ProjectsPage from './pages/ProjectsPage';
 import AdvisorsPage from './pages/AdvisorsPage';
 import ProfilePage from './pages/ProfilePage';
+import ImportStudentsPage from './pages/ImportStudentsPage';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -31,6 +32,7 @@ export default function App() {
                       <Route path="/alumni" element={<AlumniPage />} />
                       <Route path="/projects" element={<ProjectsPage />} />
                       <Route path="/advisors" element={<AdvisorsPage />} />
+                      <Route path="/import-students" element={<ImportStudentsPage />} />
                       <Route path="/profile" element={<ProfilePage />} />
                     </Routes>
                   </Layout>

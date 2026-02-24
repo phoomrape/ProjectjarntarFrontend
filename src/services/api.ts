@@ -141,6 +141,29 @@ export const studentsApi = {
   },
 };
 
+// ─── Import API ──────────────────────────────────────────────────
+export const importApi = {
+  async importStudents(file: File) {
+    const token = getToken();
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const res = await fetch(`${API_BASE}/import/students`, {
+      method: 'POST',
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: formData,
+    });
+
+    const json = await res.json();
+    if (!res.ok) {
+      throw new Error(json.message || 'เกิดข้อผิดพลาดในการนำเข้าข้อมูล');
+    }
+    return json;
+  },
+};
+
 // ─── Alumni API ──────────────────────────────────────────────────
 export const alumniApi = {
   getAll(params?: Record<string, string>) {

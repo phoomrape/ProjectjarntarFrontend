@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap');
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -126,6 +128,7 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Noto Sans Thai', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -188,4 +191,5 @@
 
 html {
   font-size: var(--font-size);
+  font-family: 'Noto Sans Thai', sans-serif;
 }

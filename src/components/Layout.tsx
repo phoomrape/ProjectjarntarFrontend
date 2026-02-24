@@ -10,8 +10,11 @@ import {
   Menu,
   X,
   User,
+  FileUp,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import sskruLogo from '../assets/sskru-logo.png';
+import lascLogo from '../assets/lasc-logo.png';
 
 interface LayoutProps {
   children: ReactNode;
@@ -59,6 +62,12 @@ export default function Layout({ children }: LayoutProps) {
       label: 'อาจารย์ที่ปรึกษา',
       roles: ['admin', 'student', 'teacher'],
     },
+    {
+      path: '/import-students',
+      icon: FileUp,
+      label: 'นำเข้านักศึกษา',
+      roles: ['admin'],
+    },
   ];
 
   const filteredNavItems = navItems.filter((item) =>
@@ -69,7 +78,10 @@ export default function Layout({ children }: LayoutProps) {
     <div className="min-h-screen bg-gray-50">
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 z-50">
-        <h1 className="text-xl">ระบบจัดการข้อมูลนักศึกษา</h1>
+        <div className="flex items-center gap-2">
+          <img src={sskruLogo} alt="SSKRU" className="h-10 w-10 object-contain" />
+          <img src={lascLogo} alt="LASC" className="h-8 object-contain" />
+        </div>
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="p-2 hover:bg-gray-100 rounded-lg"
@@ -85,7 +97,11 @@ export default function Layout({ children }: LayoutProps) {
         } lg:translate-x-0`}
       >
         <div className="p-6 border-b border-gray-200">
-          <h1 className="text-xl">ระบบจัดการข้อมูลนักศึกษา</h1>
+          <div className="flex items-center gap-3 mb-3">
+            <img src={sskruLogo} alt="SSKRU" className="h-12 w-12 object-contain" />
+            <img src={lascLogo} alt="LASC" className="h-10 object-contain" />
+          </div>
+          <h1 className="text-sm font-semibold text-gray-700">ระบบจัดการข้อมูลนักศึกษา</h1>
         </div>
 
         <nav className="p-4 space-y-2">
