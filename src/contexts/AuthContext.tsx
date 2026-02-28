@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { toast } from 'sonner';
 import { authApi, setToken, removeToken, getToken } from '../services/api';
 
@@ -17,6 +17,7 @@ interface User {
   faculty?: string;
   department?: string;
   phone?: string;
+  address?: string;
   year?: number;
   advisor_id?: string;
 }
@@ -25,6 +26,7 @@ interface AuthContextType {
   user: User | null;
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
+  updateUser: (updates: Partial<User>) => void;
   isAuthenticated: boolean;
 }
 
@@ -81,6 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (p.student_id) frontendUser.student_id = String(p.student_id);
             if (p.advisor_id) frontendUser.advisor_id = String(p.advisor_id);
             if (p.year) frontendUser.year = Number(p.year);
+            if (p.address) frontendUser.address = String(p.address);
             // Detect alumni: backend returns is_alumni flag for users with alumni record
             if (p.is_alumni) {
               frontendUser.role = 'alumni';
@@ -106,6 +109,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updateUser = useCallback((updates: Partial<User>) => {
+    setUser(prev => {
+      if (!prev) return prev;
+      const updated = { ...prev, ...updates };
+      localStorage.setItem('user', JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
@@ -119,6 +131,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         login,
         logout,
+        updateUser,
         isAuthenticated: !!user,
       }}
     >

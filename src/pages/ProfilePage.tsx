@@ -1,8 +1,14 @@
+import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { User, Mail, Shield, GraduationCap, Building2, BookOpen, Phone, Calendar, Hash } from 'lucide-react';
+import { authApi } from '../services/api';
+import { toast } from 'sonner';
+import { User, Mail, Shield, GraduationCap, Building2, BookOpen, Phone, Calendar, Hash, MapPin, Pencil, Save, X } from 'lucide-react';
 
 export default function ProfilePage() {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState({ email: '', phone: '', address: '' });
+  const [saving, setSaving] = useState(false);
 
   const roleLabels = {
     admin: 'ผู้ดูแลระบบ',
@@ -22,11 +28,78 @@ export default function ProfilePage() {
     8: 'ชั้นปีที่ 8',
   };
 
+  const startEditing = () => {
+    setEditData({
+      email: user?.email || '',
+      phone: user?.phone || '',
+      address: user?.address || '',
+    });
+    setIsEditing(true);
+  };
+
+  const cancelEditing = () => {
+    setIsEditing(false);
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const res = await authApi.updateProfile(editData);
+      if (res.success) {
+        updateUser({
+          email: editData.email,
+          phone: editData.phone,
+          address: editData.address,
+        });
+        toast.success('บันทึกข้อมูลสำเร็จ');
+        setIsEditing(false);
+      } else {
+        toast.error('ไม่สามารถบันทึกข้อมูลได้');
+      }
+    } catch {
+      toast.error('เกิดข้อผิดพลาดในการบันทึก');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const isStudent = user?.role === 'student';
+
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-3xl mb-2">โปรไฟล์</h1>
-        <p className="text-gray-600">ข้อมูลผู้ใช้งานของคุณ</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl mb-2">โปรไฟล์</h1>
+          <p className="text-gray-600">ข้อมูลผู้ใช้งานของคุณ</p>
+        </div>
+        {isStudent && !isEditing && (
+          <button
+            onClick={startEditing}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+          >
+            <Pencil className="w-4 h-4" />
+            แก้ไขข้อมูล
+          </button>
+        )}
+        {isStudent && isEditing && (
+          <div className="flex gap-2">
+            <button
+              onClick={cancelEditing}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2"
+            >
+              <X className="w-4 h-4" />
+              ยกเลิก
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2 disabled:opacity-50"
+            >
+              <Save className="w-4 h-4" />
+              {saving ? 'กำลังบันทึก...' : 'บันทึก'}
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -64,26 +137,41 @@ export default function ProfilePage() {
           )}
 
           {/* อีเมล */}
-          {user?.email && (
-            <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
-              <Mail className="w-5 h-5 text-gray-400 mt-0.5" />
-              <div>
-                <p className="text-sm text-gray-600 mb-1">อีเมล</p>
-                <p className="text-gray-900">{user.email}</p>
-              </div>
+          <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
+            <Mail className="w-5 h-5 text-gray-400 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm text-gray-600 mb-1">อีเมล</p>
+              {isEditing ? (
+                <input
+                  type="email"
+                  value={editData.email}
+                  onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              ) : (
+                <p className="text-gray-900">{user?.email || 'ยังไม่ได้ระบุ'}</p>
+              )}
             </div>
-          )}
+          </div>
 
           {/* เบอร์โทรศัพท์ */}
-          {user?.phone && (
-            <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
-              <Phone className="w-5 h-5 text-gray-400 mt-0.5" />
-              <div>
-                <p className="text-sm text-gray-600 mb-1">เบอร์โทรศัพท์</p>
-                <p className="text-gray-900">{user.phone}</p>
-              </div>
+          <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
+            <Phone className="w-5 h-5 text-gray-400 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm text-gray-600 mb-1">เบอร์โทรศัพท์</p>
+              {isEditing ? (
+                <input
+                  type="tel"
+                  value={editData.phone}
+                  onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="0812345678"
+                />
+              ) : (
+                <p className="text-gray-900">{user?.phone || 'ยังไม่ได้ระบุ'}</p>
+              )}
             </div>
-          )}
+          </div>
 
           {/* บทบาท */}
           <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
@@ -112,6 +200,27 @@ export default function ProfilePage() {
               <div>
                 <p className="text-sm text-gray-600 mb-1">{user.role === 'teacher' ? 'สาขาที่สอน' : 'สาขาวิชา'}</p>
                 <p className="text-gray-900">{user.department}</p>
+              </div>
+            </div>
+          )}
+
+          {/* ที่อยู่ — เฉพาะนักศึกษา */}
+          {user?.role === 'student' && (
+            <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
+              <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-sm text-gray-600 mb-1">ที่อยู่</p>
+                {isEditing ? (
+                  <textarea
+                    value={editData.address}
+                    onChange={(e) => setEditData({ ...editData, address: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    rows={3}
+                    placeholder="ที่อยู่ปัจจุบัน"
+                  />
+                ) : (
+                  <p className="text-gray-900 whitespace-pre-line">{user.address || 'ยังไม่ได้ระบุ'}</p>
+                )}
               </div>
             </div>
           )}

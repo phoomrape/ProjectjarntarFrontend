@@ -20,6 +20,7 @@ export default function StudentDialog({ open, onClose, student }: StudentDialogP
     year: 1,
     email: '',
     phone: '',
+    address: '',
     status: 'Active',
   });
 
@@ -36,6 +37,7 @@ export default function StudentDialog({ open, onClose, student }: StudentDialogP
         year: student.year,
         email: student.email,
         phone: student.phone,
+        address: student.address,
         status: student.status,
       });
     } else {
@@ -48,6 +50,7 @@ export default function StudentDialog({ open, onClose, student }: StudentDialogP
         year: 1,
         email: '',
         phone: '',
+        address: '',
         status: 'Active',
       });
     }
@@ -327,6 +330,17 @@ export default function StudentDialog({ open, onClose, student }: StudentDialogP
               placeholder="0812345678"
             />
             {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+          </div>
+
+          <div>
+            <label className="block text-sm mb-2 text-gray-700">ที่อยู่</label>
+            <textarea
+              value={formData.address}
+              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="ที่อยู่ปัจจุบัน"
+              rows={3}
+            />
           </div>
 
           <div className="flex gap-3 pt-4">

@@ -87,6 +87,13 @@ export const authApi = {
     return request<ApiResponse<Record<string, unknown>>>('/auth/profile');
   },
 
+  updateProfile(data: { email?: string; phone?: string; address?: string }) {
+    return request<ApiResponse<Record<string, unknown>>>('/auth/profile', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
   changePassword(currentPassword: string, newPassword: string) {
     return request<ApiResponse<null>>('/auth/change-password', {
       method: 'PUT',

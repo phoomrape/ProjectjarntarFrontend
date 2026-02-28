@@ -121,7 +121,7 @@ export default function StudentsPage() {
 
   const handleExport = () => {
     const csv = [
-      ['รหัสนักศึกษา', 'ชื่อ', 'นามสกุล', 'คณะ', 'สาขา', 'ชั้นปี', 'อีเมล', 'เบอร์โทร', 'สถานะ'],
+      ['รหัสนักศึกษา', 'ชื่อ', 'นามสกุล', 'คณะ', 'สาขา', 'ชั้นปี', 'อีเมล', 'เบอร์โทร', 'ที่อยู่', 'สถานะ'],
       ...filteredStudents.map((s) => [
         s.student_id,
         s.first_name,
@@ -131,6 +131,7 @@ export default function StudentsPage() {
         s.year,
         s.email,
         s.phone,
+        s.address || '',
         s.status,
       ]),
     ]

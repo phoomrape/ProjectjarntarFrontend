@@ -14,14 +14,15 @@ export default function DashboardPage() {
   const totalProjects = projects.length;
   const awardProjects = projects.filter((p) => p.has_award).length;
 
-  // Faculty distribution for alumni
-  const facultyCounts = alumni.reduce((acc, a) => {
-    acc[a.faculty] = (acc[a.faculty] || 0) + 1;
+  // Department distribution for alumni
+  const departmentCounts = alumni.reduce((acc, a) => {
+    const dept = a.department || 'ไม่ระบุ';
+    acc[dept] = (acc[dept] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
-  const facultyData = Object.entries(facultyCounts).map(([name, value]) => ({
-    name: name.replace('คณะ', ''),
+  const alumniDepartmentData = Object.entries(departmentCounts).map(([name, value]) => ({
+    name,
     value,
   }));
 
@@ -51,14 +52,15 @@ export default function DashboardPage() {
     }))
     .sort((a, b) => a.year - b.year);
 
-  // Students by faculty
-  const studentsByFaculty = students.reduce((acc, s) => {
-    acc[s.faculty] = (acc[s.faculty] || 0) + 1;
+  // Students by department
+  const studentsByDepartment = students.reduce((acc, s) => {
+    const dept = s.department || 'ไม่ระบุ';
+    acc[dept] = (acc[dept] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
-  const studentFacultyData = Object.entries(studentsByFaculty).map(([name, count]) => ({
-    faculty: name.replace('คณะ', ''),
+  const studentDepartmentData = Object.entries(studentsByDepartment).map(([name, count]) => ({
+    department: name,
     จำนวน: count,
   }));
 
@@ -137,13 +139,13 @@ export default function DashboardPage() {
 
       {/* Charts Row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Students by Faculty */}
+        {/* Students by Department */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl mb-4">จำนวนนักศึกษาแบ่งตามคณะ</h2>
+          <h2 className="text-xl mb-4">จำนวนนักศึกษาแบ่งตามสาขา</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={studentFacultyData}>
+            <BarChart data={studentDepartmentData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="faculty" />
+              <XAxis dataKey="department" tick={{ fontSize: 11 }} />
               <YAxis />
               <Tooltip />
               <Legend />
@@ -152,13 +154,13 @@ export default function DashboardPage() {
           </ResponsiveContainer>
         </div>
 
-        {/* Alumni by Faculty */}
+        {/* Alumni by Department */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl mb-4">สัดส่วนศิษย์เก่าตามคณะ</h2>
+          <h2 className="text-xl mb-4">สัดส่วนศิษย์เก่าตามสาขา</h2>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
-                data={facultyData}
+                data={alumniDepartmentData}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
@@ -169,7 +171,7 @@ export default function DashboardPage() {
                 fill="#8884d8"
                 dataKey="value"
               >
-                {facultyData.map((entry, index) => (
+                {alumniDepartmentData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>

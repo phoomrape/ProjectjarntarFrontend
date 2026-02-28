@@ -13,6 +13,7 @@ export interface Student {
   year: number;
   email: string;
   phone: string;
+  address: string;
   status: 'Active' | 'Graduated' | 'Suspended';
 }
 

@@ -1,4 +1,4 @@
-import { X, Mail, Phone, BookOpen, Building2, Hash, User } from 'lucide-react';
+import { X, Mail, Phone, BookOpen, Building2, Hash, User, MapPin } from 'lucide-react';
 import { Student } from '../contexts/DataContext';
 
 interface StudentDetailDialogProps {
@@ -86,6 +86,11 @@ export default function StudentDetailDialog({ open, onClose, student }: StudentD
               label="เบอร์โทร"
               value={student.phone}
               isLink={`tel:${student.phone}`}
+            />
+            <InfoRow
+              icon={<MapPin className="w-4 h-4 text-gray-400" />}
+              label="ที่อยู่"
+              value={student.address || '-'}
             />
           </div>
         </div>
